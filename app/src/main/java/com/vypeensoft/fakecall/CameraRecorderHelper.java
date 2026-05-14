@@ -41,6 +41,7 @@ public class CameraRecorderHelper {
 
     private HandlerThread backgroundThread;
     private Handler backgroundHandler;
+    private TextureView pendingTextureView;
 
     private CameraRecorderHelper(Context context) {
         this.context = context.getApplicationContext();
@@ -55,11 +56,13 @@ public class CameraRecorderHelper {
 
     public void startRecording(TextureView textureView) {
         if (isRecording) return;
+        this.pendingTextureView = textureView;
         startBackgroundThread();
-        openCamera(textureView);
+        openCamera();
     }
 
     public void attachPreview(TextureView textureView) {
+        this.pendingTextureView = textureView;
         if (!isRecording || cameraDevice == null || textureView.getSurfaceTexture() == null) return;
         try {
             if (captureSession != null) {
@@ -131,7 +134,7 @@ public class CameraRecorderHelper {
     }
 
     @SuppressLint("MissingPermission")
-    private void openCamera(TextureView textureView) {
+    private void openCamera() {
         CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
         try {
             String backCameraId = null;
@@ -163,7 +166,9 @@ public class CameraRecorderHelper {
                 @Override
                 public void onOpened(@NonNull CameraDevice camera) {
                     cameraDevice = camera;
-                    startPreviewAndRecording(textureView);
+                    if (pendingTextureView != null) {
+                        startPreviewAndRecording(pendingTextureView);
+                    }
                 }
 
                 @Override
@@ -240,11 +245,11 @@ public class CameraRecorderHelper {
         }
         mediaRecorder.setOutputFile(outputFile.getAbsolutePath());
         
-        mediaRecorder.setVideoEncodingBitRate(10000000);
+        mediaRecorder.setVideoEncodingBitRate(5000000); // Lower bitrate for compatibility
         mediaRecorder.setVideoFrameRate(30);
         
         if (videoSize == null) {
-            videoSize = new Size(1280, 720); // Default if somehow null
+            videoSize = new Size(1280, 720);
         }
         mediaRecorder.setVideoSize(videoSize.getWidth(), videoSize.getHeight());
         
