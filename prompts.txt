@@ -19,7 +19,7 @@ more prompts
 *	Give the screens a dark theme and font colors accordingly
 *	On clicking of dial, along with fake dialing, also start video recording from back camera.
 *	The camera preview should be a small square at the bottom left part of the screen...
-*	
+*	app is running, but the preview is black square. and when call is ended, the recording is saved in correct location, but the filesize is 0.
 *	
 *	
 *	

@@ -63,20 +63,42 @@ public class CameraRecorderHelper {
         try {
             if (captureSession != null) {
                 captureSession.stopRepeating();
-                // We don't close the session, just change the target if possible, 
-                // but Camera2 usually requires a new session for new surfaces.
-                // For simplicity, we'll just stop and restart if needed, 
-                // but let's try just updating the request first.
+                captureSession.close();
+                captureSession = null;
             }
             
-            Surface textureSurface = new Surface(textureView.getSurfaceTexture());
+            SurfaceTexture texture = textureView.getSurfaceTexture();
+            texture.setDefaultBufferSize(videoSize.getWidth(), videoSize.getHeight());
+            Surface textureSurface = new Surface(texture);
             Surface recorderSurface = mediaRecorder.getSurface();
 
             final CaptureRequest.Builder builder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
             builder.addTarget(textureSurface);
             builder.addTarget(recorderSurface);
 
-            captureSession.setRepeatingRequest(builder.build(), null, backgroundHandler);
+            List<Surface> surfaces = new ArrayList<>();
+            surfaces.add(textureSurface);
+            surfaces.add(recorderSurface);
+
+            cameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
+                @Override
+                public void onConfigured(@NonNull CameraCaptureSession session) {
+                    captureSession = session;
+                    try {
+                        builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+                        builder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO);
+                        builder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
+                        captureSession.setRepeatingRequest(builder.build(), null, backgroundHandler);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Failed to restart repeating request", e);
+                    }
+                }
+
+                @Override
+                public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+                    Log.e(TAG, "Re-configuration failed");
+                }
+            }, backgroundHandler);
         } catch (Exception e) {
             Log.e(TAG, "Error attaching preview", e);
         }
@@ -111,12 +133,22 @@ public class CameraRecorderHelper {
     private void openCamera(TextureView textureView) {
         CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
         try {
-            String[] cameraIdList = manager.getCameraIdList();
-            if (cameraIdList == null || cameraIdList.length == 0) {
-                Log.e(TAG, "No cameras found");
+            String backCameraId = null;
+            for (String id : manager.getCameraIdList()) {
+                CameraCharacteristics chars = manager.getCameraCharacteristics(id);
+                Integer facing = chars.get(CameraCharacteristics.LENS_FACING);
+                if (facing != null && facing == CameraCharacteristics.LENS_FACING_BACK) {
+                    backCameraId = id;
+                    break;
+                }
+            }
+            
+            if (backCameraId == null) {
+                Log.e(TAG, "No back camera found");
                 return;
             }
-            String cameraId = cameraIdList[0]; // Back camera
+            
+            String cameraId = backCameraId;
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
             Size[] sizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
                     .getOutputSizes(MediaRecorder.class);
@@ -153,7 +185,11 @@ public class CameraRecorderHelper {
     private void startPreviewAndRecording(TextureView textureView) {
         try {
             setupMediaRecorder();
-            Surface textureSurface = new Surface(textureView.getSurfaceTexture());
+            SurfaceTexture texture = textureView.getSurfaceTexture();
+            if (texture == null) return;
+            texture.setDefaultBufferSize(videoSize.getWidth(), videoSize.getHeight());
+            
+            Surface textureSurface = new Surface(texture);
             Surface recorderSurface = mediaRecorder.getSurface();
 
             final CaptureRequest.Builder builder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
@@ -170,11 +206,14 @@ public class CameraRecorderHelper {
                     captureSession = session;
                     try {
                         builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+                        builder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO);
+                        builder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
+                        
                         captureSession.setRepeatingRequest(builder.build(), null, backgroundHandler);
                         mediaRecorder.start();
                         isRecording = true;
-                    } catch (CameraAccessException e) {
-                        Log.e(TAG, "Failed to start repeating request", e);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Failed to start recording", e);
                     }
                 }
 
@@ -210,6 +249,7 @@ public class CameraRecorderHelper {
         
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        mediaRecorder.setOrientationHint(90);
         mediaRecorder.prepare();
     }
 
