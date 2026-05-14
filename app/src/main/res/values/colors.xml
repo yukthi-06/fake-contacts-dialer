@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Primary Colors -->
-    <color name="primary">#3F51B5</color>
-    <color name="primary_dark">#303F9F</color>
-    <color name="primary_light">#C5CAE9</color>
+    <color name="primary">#000000</color>
+    <color name="primary_dark">#000000</color>
+    <color name="primary_light">#333333</color>
     
     <!-- Accent Color -->
-    <color name="accent">#FF4081</color>
+    <color name="accent">#1A73E8</color>
     
     <!-- Neutral Colors -->
-    <color name="background">#F5F5F5</color>
-    <color name="surface">#FFFFFF</color>
-    <color name="error">#B00020</color>
+    <color name="background">#000000</color>
+    <color name="surface">#121212</color>
+    <color name="error">#CF6679</color>
     
     <!-- Text Colors -->
-    <color name="text_primary">#212121</color>
-    <color name="text_secondary">#757575</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B0B0B0</color>
     <color name="text_on_primary">#FFFFFF</color>
     <color name="text_on_accent">#FFFFFF</color>
-    <color name="divider">#BDBDBD</color>
+    <color name="divider">#2C2C2C</color>
 
     <!-- Legacy / Compatibility -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- Search Bar -->
+    <color name="search_background">#1E1E1E</color>
 </resources>

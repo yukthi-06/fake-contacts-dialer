@@ -16,7 +16,7 @@ Give it as a single prompt to give to an agent to achieve this
 
 more prompts
 *	use "X:\Projects_X\0_Active\8_Android_APK\Fake_Contacts_Dialer_APK_GITHUB\Contacts-App-Icon.png" as app icon.  the whole image should be visible, with remaining border parts as white
-*	
+*	Give the screens a dark theme and font colors accordingly
 *	
 *	
 *	

@@ -21,7 +21,7 @@
             android:layout_height="48dp"
             app:cardCornerRadius="24dp"
             app:cardElevation="0dp"
-            app:strokeColor="#DDDDDD"
+            app:strokeColor="@color/divider"
             app:strokeWidth="1dp">
 
             <ImageView
