@@ -53,16 +53,16 @@ jobs:
         if: success()
         run: |
           mv app/build/outputs/apk/debug/app-debug.apk \
-             app/build/outputs/apk/debug/TODO-Task-List-${BUILD_TIMESTAMP}.apk
-          echo "Renamed APK --> TODO-Task-List-${BUILD_TIMESTAMP}.apk"
+             app/build/outputs/apk/debug/Fake-Contacts-Dialer-${BUILD_TIMESTAMP}.apk
+          echo "Renamed APK --> Fake-Contacts-Dialer-${BUILD_TIMESTAMP}.apk"
 
       # -- Upload APK artifact -------------------------------------------------
       - name: Upload debug APK
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: TODO-Task-List-${{ env.BUILD_TIMESTAMP }}
-          path: app/build/outputs/apk/debug/TODO-Task-List-${{ env.BUILD_TIMESTAMP }}.apk
+          name: Fake-Contacts-Dialer-${{ env.BUILD_TIMESTAMP }}
+          path: app/build/outputs/apk/debug/Fake-Contacts-Dialer-${{ env.BUILD_TIMESTAMP }}.apk
           if-no-files-found: error    # fail loudly if APK is missing
 
       # -- Write job summary ---------------------------------------------------
@@ -74,7 +74,7 @@ jobs:
           echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| APK | \`app/build/outputs/apk/debug/app-debug.apk\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Artifact | **TODO-Task-List-$BUILD_TIMESTAMP** (download from the Summary tab above) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Artifact | **Fake-Contacts-Dialer-$BUILD_TIMESTAMP** (download from the Summary tab above) |" >> $GITHUB_STEP_SUMMARY
 
       # -- Upload build reports on failure (for easier debugging) --------------
       - name: Upload build reports on failure
