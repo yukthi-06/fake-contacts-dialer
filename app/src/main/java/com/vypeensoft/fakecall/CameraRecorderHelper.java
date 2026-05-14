@@ -2,12 +2,14 @@ package com.vypeensoft.fakecall;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.Handler;
@@ -15,7 +17,6 @@ import android.os.HandlerThread;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
-import android.graphics.SurfaceTexture;
 import android.view.TextureView;
 
 import androidx.annotation.NonNull;
@@ -24,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -64,52 +64,14 @@ public class CameraRecorderHelper {
     public void attachPreview(TextureView textureView) {
         this.pendingTextureView = textureView;
         if (!isRecording || cameraDevice == null || textureView.getSurfaceTexture() == null) return;
-        try {
-            if (captureSession != null) {
-                captureSession.stopRepeating();
-                captureSession.close();
-                captureSession = null;
-            }
-            
-            SurfaceTexture texture = textureView.getSurfaceTexture();
-            texture.setDefaultBufferSize(videoSize.getWidth(), videoSize.getHeight());
-            Surface textureSurface = new Surface(texture);
-            Surface recorderSurface = mediaRecorder.getSurface();
-
-            final CaptureRequest.Builder builder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
-            builder.addTarget(textureSurface);
-            builder.addTarget(recorderSurface);
-
-            List<Surface> surfaces = new ArrayList<>();
-            surfaces.add(textureSurface);
-            surfaces.add(recorderSurface);
-
-            cameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
-                @Override
-                public void onConfigured(@NonNull CameraCaptureSession session) {
-                    captureSession = session;
-                    try {
-                        builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
-                        builder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO);
-                        builder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
-                        captureSession.setRepeatingRequest(builder.build(), null, backgroundHandler);
-                    } catch (Exception e) {
-                        Log.e(TAG, "Failed to restart repeating request", e);
-                    }
-                }
-
-                @Override
-                public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-                    Log.e(TAG, "Re-configuration failed");
-                }
-            }, backgroundHandler);
-        } catch (Exception e) {
-            Log.e(TAG, "Error attaching preview", e);
-        }
+        
+        // Re-run the preview setup on the background thread
+        backgroundHandler.post(() -> startPreviewAndRecording(textureView));
     }
 
     public void stopRecording() {
         if (!isRecording) return;
+        isRecording = false;
         try {
             if (captureSession != null) {
                 captureSession.stopRepeating();
@@ -117,7 +79,11 @@ public class CameraRecorderHelper {
                 captureSession = null;
             }
             if (mediaRecorder != null) {
-                mediaRecorder.stop();
+                try {
+                    mediaRecorder.stop();
+                } catch (RuntimeException e) {
+                    Log.e(TAG, "MediaRecorder stop failed", e);
+                }
                 mediaRecorder.reset();
                 mediaRecorder.release();
                 mediaRecorder = null;
@@ -129,7 +95,6 @@ public class CameraRecorderHelper {
         } catch (Exception e) {
             Log.e(TAG, "Error stopping recording", e);
         }
-        isRecording = false;
         stopBackgroundThread();
     }
 
@@ -146,23 +111,17 @@ public class CameraRecorderHelper {
                     break;
                 }
             }
-            
+
             if (backCameraId == null) {
                 Log.e(TAG, "No back camera found");
                 return;
             }
-            
-            String cameraId = backCameraId;
-            CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-            Size[] sizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-                    .getOutputSizes(MediaRecorder.class);
-            if (sizes == null || sizes.length == 0) {
-                Log.e(TAG, "No video sizes found");
-                return;
-            }
-            videoSize = sizes[0];
 
-            manager.openCamera(cameraId, new CameraDevice.StateCallback() {
+            CameraCharacteristics characteristics = manager.getCameraCharacteristics(backCameraId);
+            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            videoSize = chooseVideoSize(map.getOutputSizes(MediaRecorder.class));
+
+            manager.openCamera(backCameraId, new CameraDevice.StateCallback() {
                 @Override
                 public void onOpened(@NonNull CameraDevice camera) {
                     cameraDevice = camera;
@@ -189,12 +148,22 @@ public class CameraRecorderHelper {
     }
 
     private void startPreviewAndRecording(TextureView textureView) {
+        if (cameraDevice == null || textureView.getSurfaceTexture() == null) return;
+        
         try {
-            setupMediaRecorder();
+            // If already recording, close current session before switching surface
+            if (captureSession != null) {
+                captureSession.stopRepeating();
+                captureSession.close();
+                captureSession = null;
+            }
+
+            if (!isRecording) {
+                setupMediaRecorder();
+            }
+
             SurfaceTexture texture = textureView.getSurfaceTexture();
-            if (texture == null) return;
             texture.setDefaultBufferSize(videoSize.getWidth(), videoSize.getHeight());
-            
             Surface textureSurface = new Surface(texture);
             Surface recorderSurface = mediaRecorder.getSurface();
 
@@ -213,67 +182,73 @@ public class CameraRecorderHelper {
                     try {
                         builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
                         builder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO);
-                        builder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
                         
                         captureSession.setRepeatingRequest(builder.build(), null, backgroundHandler);
-                        mediaRecorder.start();
-                        isRecording = true;
+                        
+                        if (!isRecording) {
+                            mediaRecorder.start();
+                            isRecording = true;
+                        }
                     } catch (Exception e) {
-                        Log.e(TAG, "Failed to start recording", e);
+                        Log.e(TAG, "Failed to start session/recording", e);
                     }
                 }
 
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-                    Log.e(TAG, "Capture session configuration failed");
+                    Log.e(TAG, "Session configuration failed");
                 }
             }, backgroundHandler);
         } catch (Exception e) {
-            Log.e(TAG, "Error starting preview and recording", e);
+            Log.e(TAG, "Error in startPreviewAndRecording", e);
         }
     }
 
     private void setupMediaRecorder() throws IOException {
-        mediaRecorder = new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        if (mediaRecorder == null) {
+            mediaRecorder = new MediaRecorder();
+        }
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         
         File outputFile = getOutputMediaFile();
-        if (outputFile == null) {
-            throw new IOException("Could not create output file");
-        }
+        if (outputFile == null) throw new IOException("File creation failed");
         mediaRecorder.setOutputFile(outputFile.getAbsolutePath());
         
-        mediaRecorder.setVideoEncodingBitRate(5000000); // Lower bitrate for compatibility
-        mediaRecorder.setVideoFrameRate(30);
-        
-        if (videoSize == null) {
-            videoSize = new Size(1280, 720);
-        }
+        mediaRecorder.setVideoEncodingBitRate(2500000);
+        mediaRecorder.setVideoFrameRate(24);
         mediaRecorder.setVideoSize(videoSize.getWidth(), videoSize.getHeight());
-        
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         mediaRecorder.setOrientationHint(90);
         mediaRecorder.prepare();
     }
 
+    private Size chooseVideoSize(Size[] choices) {
+        for (Size size : choices) {
+            if (size.getWidth() == size.getHeight() * 4 / 3 && size.getWidth() <= 1080) {
+                return size;
+            }
+        }
+        return choices[choices.length - 1]; // Smallest
+    }
+
     private File getOutputMediaFile() {
         File mediaStorageDir = new File(Environment.getExternalStorageDirectory(), "Vypeensoft/Contacts_Phone_Dialer/recordings");
         if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                return null;
-            }
+            if (!mediaStorageDir.mkdirs()) return null;
         }
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         return new File(mediaStorageDir.getPath() + File.separator + "VID_" + timeStamp + ".mp4");
     }
 
     private void startBackgroundThread() {
-        backgroundThread = new HandlerThread("CameraBackground");
-        backgroundThread.start();
-        backgroundHandler = new Handler(backgroundThread.getLooper());
+        if (backgroundThread == null) {
+            backgroundThread = new HandlerThread("CameraBackground");
+            backgroundThread.start();
+            backgroundHandler = new Handler(backgroundThread.getLooper());
+        }
     }
 
     private void stopBackgroundThread() {
@@ -284,7 +259,7 @@ public class CameraRecorderHelper {
                 backgroundThread = null;
                 backgroundHandler = null;
             } catch (InterruptedException e) {
-                Log.e(TAG, "Interrupted while stopping background thread", e);
+                Log.e(TAG, "Thread join interrupted", e);
             }
         }
     }
