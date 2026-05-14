@@ -1,12 +1,17 @@
 package com.vypeensoft.fakecall;
 
+import android.graphics.Color;
 import android.graphics.SurfaceTexture;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.TextureView;
+import android.view.View;
 import android.widget.Chronometer;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,6 +22,9 @@ public class InCallActivity extends AppCompatActivity {
     private ContactModel contact;
     private Chronometer chronometer;
     private AudioPlayerHelper audioPlayerHelper;
+    private boolean isMuted = false;
+    private boolean isSpeakerOn = false;
+    private boolean isKeypadOpen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +81,55 @@ public class InCallActivity extends AppCompatActivity {
         imgAvatar.setImageResource(R.drawable.ic_person_placeholder);
 
         fabEnd.setOnClickListener(v -> endCall());
+
+        setupActionButtons();
+    }
+
+    private void setupActionButtons() {
+        LinearLayout layoutMute = findViewById(R.id.layout_mute);
+        LinearLayout layoutKeypad = findViewById(R.id.layout_keypad);
+        LinearLayout layoutSpeaker = findViewById(R.id.layout_speaker);
+        
+        ImageView imgMute = findViewById(R.id.img_mute);
+        ImageView imgKeypad = findViewById(R.id.img_keypad);
+        ImageView imgSpeaker = findViewById(R.id.img_speaker);
+
+        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+
+        layoutMute.setOnClickListener(v -> {
+            isMuted = !isMuted;
+            if (isMuted) {
+                imgMute.setColorFilter(Color.parseColor("#4CAF50")); // Green for active
+                Toast.makeText(this, "Microphone muted", Toast.LENGTH_SHORT).show();
+            } else {
+                imgMute.setColorFilter(Color.WHITE);
+                Toast.makeText(this, "Microphone unmuted", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        layoutKeypad.setOnClickListener(v -> {
+            isKeypadOpen = !isKeypadOpen;
+            if (isKeypadOpen) {
+                imgKeypad.setColorFilter(Color.parseColor("#4CAF50"));
+                Toast.makeText(this, "Keypad shown", Toast.LENGTH_SHORT).show();
+            } else {
+                imgKeypad.setColorFilter(Color.WHITE);
+                Toast.makeText(this, "Keypad hidden", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        layoutSpeaker.setOnClickListener(v -> {
+            isSpeakerOn = !isSpeakerOn;
+            if (isSpeakerOn) {
+                audioManager.setSpeakerphoneOn(true);
+                imgSpeaker.setColorFilter(Color.parseColor("#4CAF50"));
+                Toast.makeText(this, "Speakerphone on", Toast.LENGTH_SHORT).show();
+            } else {
+                audioManager.setSpeakerphoneOn(false);
+                imgSpeaker.setColorFilter(Color.WHITE);
+                Toast.makeText(this, "Speakerphone off", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void startCall() {

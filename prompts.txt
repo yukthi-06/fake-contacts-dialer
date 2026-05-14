@@ -21,7 +21,7 @@ more prompts
 *	The camera preview should be a small square at the bottom left part of the screen...
 *	app is running, but the preview is black square. and when call is ended, the recording is saved in correct location, but the filesize is 0.
 *	make the preview window as small as possible and allowed in android
-*	
+*	make the mute, keypad and speaker work... atleast make it look like it works
 *	
 *	
 *	

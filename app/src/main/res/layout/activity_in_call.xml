@@ -69,13 +69,18 @@
         android:padding="24dp">
 
         <LinearLayout
+            android:id="@+id/layout_mute"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/img_mute"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_mic_off"
@@ -91,13 +96,18 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layout_keypad"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/img_keypad"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_keypad"
@@ -113,13 +123,18 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layout_speaker"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/img_speaker"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_speaker"
