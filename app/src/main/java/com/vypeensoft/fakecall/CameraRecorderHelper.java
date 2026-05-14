@@ -15,6 +15,7 @@ import android.os.HandlerThread;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
+import android.graphics.SurfaceTexture;
 import android.view.TextureView;
 
 import androidx.annotation.NonNull;
