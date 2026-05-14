@@ -1,0 +1,250 @@
+=================================================================================
+create an android application which is basically a fake contacts and dialer. 
+Similar to a Contacts app, this app should show a list of contacts on startup.  
+These contacts have to be read from a file on the phone , by default , from /sdcard/Vypeensoft/Contacts_Phone_Dialer/settings/contacts.json.
+If no data is found, create a file with necessary fake contacts
+On clicking on any contact, the app should simulate a phobne call with that contact.  It should ring a few times, followed by call picked up and in progress.
+An audio MP3 has to be played which this fake call is going on.
+The call timer should start from 00:00:01 and keep incrementing every second, until the call end button is clicked.
+for this, for each contact name, one MP3 will be provided in /sdcard/Vypeensoft/Contacts_Phone_Dialer/call_audio/* folder
+The contacts screen, dialing screen and in call screen should be looking like popular android contacts and dialer apps.
+develop the app in java (not kotlin)
+Ensure the app runs on Android 8+ (API 26 and above).
+
+Give it as a single prompt to give to an agent to achieve this
+=================================================================================
+
+
+
+
+AI output
+
+Use the following single prompt with your coding agent:
+
+```text
+Create a complete Android application in Java (NOT Kotlin) named “Fake Contacts Dialer”.
+
+Core Requirements
+- Android app must support Android 8.0+ (API 26 and above)
+- Use Java only
+- Use Android Studio project structure
+- Use Gradle build system
+- Use Material Design components where appropriate
+- App should look visually similar to modern Android Contacts and Dialer apps
+- Clean architecture and well-commented code
+- No placeholder pseudo-code; provide production-ready code
+
+App Purpose
+This is a fake contacts and fake calling simulator application.
+
+Main Features
+1. Contacts List Screen
+2. Fake Dialing / Ringing Screen
+3. Fake In-Call Screen
+4. Local JSON-based contacts storage
+5. MP3 playback during fake call
+6. Simulated call states and timer
+
+Storage Requirements
+The app must read contacts from:
+
+/sdcard/Vypeensoft/Contacts_Phone_Dialer/settings/contacts.json
+
+If the file or folders do not exist:
+- Automatically create required directories
+- Automatically generate a default contacts.json file
+- Populate it with several fake contacts
+
+Also use this folder for call audio files:
+
+/sdcard/Vypeensoft/Contacts_Phone_Dialer/call_audio/
+
+Each contact has a corresponding MP3 file.
+
+Example:
+- Contact: John
+- Audio file: John.mp3
+
+If audio file is missing:
+- Handle gracefully
+- Show toast message
+- Continue fake call without crashing
+
+Contacts JSON Structure
+Use a JSON format similar to:
+
+[
+  {
+    "name": "John",
+    "phone": "+1 555 123 4567",
+    "photo": "",
+    "audio": "John.mp3"
+  },
+  {
+    "name": "Emma",
+    "phone": "+1 555 999 8888",
+    "photo": "",
+    "audio": "Emma.mp3"
+  }
+]
+
+Permissions
+Implement runtime permission handling for:
+- READ_EXTERNAL_STORAGE
+- WRITE_EXTERNAL_STORAGE
+- READ_MEDIA_AUDIO (for Android 13+ if needed)
+
+App Flow
+1. On launch:
+   - Load contacts from JSON
+   - If missing, create default JSON and contacts
+   - Show contacts list in RecyclerView
+
+2. Contacts Screen
+   - Similar to Android Contacts UI
+   - Circular avatar
+   - Name
+   - Phone number
+   - Search bar at top
+   - Smooth scrolling
+   - Material Design styling
+   - Tapping contact starts fake call flow
+
+3. Fake Dialing Screen
+   - Show:
+     - Contact name
+     - Number
+     - Large avatar
+     - “Calling…”
+   - Simulate ringing for 4–8 seconds
+   - Play ringtone during ringing
+   - After delay:
+     - Transition to “Call in progress”
+     - Start call timer
+     - Start MP3 playback
+
+4. In-Call Screen
+   - Similar to modern Android in-call UI
+   - Show:
+     - Contact name
+     - Number
+     - Call duration timer
+     - End call button
+     - Mute button (UI only)
+     - Speaker button (UI only)
+     - Keypad button (UI only)
+   - Timer format:
+     00:00:01
+     increment every second
+   - Timer stops when call ends
+   - MP3 stops when call ends
+
+5. Audio Playback
+   - Use MediaPlayer
+   - Audio should continue while timer runs
+   - Handle lifecycle properly
+   - Release MediaPlayer correctly
+   - Prevent memory leaks
+
+UI Requirements
+Contacts Screen:
+- RecyclerView
+- Toolbar
+- SearchView
+- Circular avatars
+- Modern Contacts-like layout
+
+Dialing Screen:
+- Full-screen activity
+- Dark or gradient background
+- Contact image
+- Animated “Calling…”
+
+In-Call Screen:
+- Large contact avatar
+- Big red end-call button
+- Bottom call controls row
+- Timer centered
+
+Technical Requirements
+Use:
+- RecyclerView
+- CardView
+- Gson or org.json for JSON parsing
+- MediaPlayer for audio
+- Handler or CountDownTimer for ringing simulation
+- Chronometer OR custom timer implementation
+- Proper runtime permissions
+- File I/O handling
+- Modular code structure
+
+Architecture
+Create:
+- Activities
+- Adapters
+- Models
+- Utility classes
+- Storage helper
+- Audio helper
+
+Suggested structure:
+- MainActivity
+- DialingActivity
+- InCallActivity
+- ContactAdapter
+- ContactModel
+- JsonStorageHelper
+- AudioPlayerHelper
+
+Edge Cases
+- Missing JSON file
+- Corrupted JSON
+- Missing audio file
+- Permission denied
+- Empty contacts list
+- App backgrounded during call
+- Orientation changes
+
+Behavior Requirements
+- Prevent app crashes
+- Use try/catch appropriately
+- Add logs where useful
+- Ensure smooth transitions
+- Use realistic fake-call timings
+
+Assets
+Generate:
+- Default avatars
+- Simple Material icons
+- Sample ringtone usage
+
+Deliverables
+Provide:
+1. Full Android Studio project
+2. Complete Java source code
+3. XML layouts
+4. Manifest
+5. Gradle files
+6. Permissions setup
+7. Sample contacts.json generation
+8. README with setup instructions
+9. Comments explaining important sections
+
+Important Constraints
+- DO NOT use Kotlin
+- DO NOT use Jetpack Compose
+- Use XML layouts only
+- Must compile successfully
+- Must run on Android 8+ devices
+- Must look polished and realistic
+
+Also ensure:
+- Proper lifecycle handling
+- MediaPlayer cleanup
+- RecyclerView performance optimization
+- Runtime permission compatibility across Android versions
+- Realistic fake call experience
+
+Generate all required files completely.
+Use menu and other pages from existing project folder.
+```
