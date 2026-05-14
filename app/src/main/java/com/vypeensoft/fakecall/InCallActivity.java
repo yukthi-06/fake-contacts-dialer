@@ -1,7 +1,9 @@
 package com.vypeensoft.fakecall;
 
+import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.view.TextureView;
 import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,6 +32,28 @@ public class InCallActivity extends AppCompatActivity {
         audioPlayerHelper = new AudioPlayerHelper();
         setupUI();
         startCall();
+        setupCameraPreview();
+    }
+
+    private void setupCameraPreview() {
+        TextureView textureView = findViewById(R.id.texture_preview);
+        textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+            @Override
+            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+                CameraRecorderHelper.getInstance(InCallActivity.this).attachPreview(textureView);
+            }
+
+            @Override
+            public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {}
+
+            @Override
+            public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+                return false;
+            }
+
+            @Override
+            public void onSurfaceTextureUpdated(SurfaceTexture surface) {}
+        });
     }
 
     private void setupUI() {
@@ -60,6 +84,7 @@ public class InCallActivity extends AppCompatActivity {
     private void endCall() {
         chronometer.stop();
         audioPlayerHelper.stopAudio();
+        CameraRecorderHelper.getInstance(this).stopRecording();
         finish();
     }
 
@@ -69,6 +94,7 @@ public class InCallActivity extends AppCompatActivity {
         if (audioPlayerHelper != null) {
             audioPlayerHelper.stopAudio();
         }
+        CameraRecorderHelper.getInstance(this).stopRecording();
     }
 
     @Override
