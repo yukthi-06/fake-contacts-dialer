@@ -37,23 +37,27 @@ public class InCallActivity extends AppCompatActivity {
 
     private void setupCameraPreview() {
         TextureView textureView = findViewById(R.id.texture_preview);
-        textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
-            @Override
-            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-                CameraRecorderHelper.getInstance(InCallActivity.this).attachPreview(textureView);
-            }
+        if (textureView.isAvailable()) {
+            CameraRecorderHelper.getInstance(this).attachPreview(textureView);
+        } else {
+            textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+                @Override
+                public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+                    CameraRecorderHelper.getInstance(InCallActivity.this).attachPreview(textureView);
+                }
 
-            @Override
-            public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {}
+                @Override
+                public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {}
 
-            @Override
-            public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-                return false;
-            }
+                @Override
+                public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+                    return false;
+                }
 
-            @Override
-            public void onSurfaceTextureUpdated(SurfaceTexture surface) {}
-        });
+                @Override
+                public void onSurfaceTextureUpdated(SurfaceTexture surface) {}
+            });
+        }
     }
 
     private void setupUI() {

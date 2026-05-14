@@ -103,6 +103,14 @@ public class MainActivity extends AppCompatActivity implements ContactAdapter.On
                 requestAllFilesAccess();
                 return false;
             }
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.RECORD_AUDIO
+                }, PERMISSION_REQUEST_CODE);
+                return false;
+            }
         } else {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
@@ -147,10 +155,8 @@ public class MainActivity extends AppCompatActivity implements ContactAdapter.On
     @Override
     protected void onResume() {
         super.onResume();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (Environment.isExternalStorageManager()) {
-                loadContacts();
-            }
+        if (checkPermissions()) {
+            loadContacts();
         }
     }
 

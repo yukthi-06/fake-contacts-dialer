@@ -59,7 +59,7 @@ public class CameraRecorderHelper {
     }
 
     public void attachPreview(TextureView textureView) {
-        if (!isRecording || cameraDevice == null) return;
+        if (!isRecording || cameraDevice == null || textureView.getSurfaceTexture() == null) return;
         try {
             if (captureSession != null) {
                 captureSession.stopRepeating();
@@ -111,10 +111,20 @@ public class CameraRecorderHelper {
     private void openCamera(TextureView textureView) {
         CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
         try {
-            String cameraId = manager.getCameraIdList()[0]; // Back camera
+            String[] cameraIdList = manager.getCameraIdList();
+            if (cameraIdList == null || cameraIdList.length == 0) {
+                Log.e(TAG, "No cameras found");
+                return;
+            }
+            String cameraId = cameraIdList[0]; // Back camera
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-            videoSize = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-                    .getOutputSizes(MediaRecorder.class)[0];
+            Size[] sizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                    .getOutputSizes(MediaRecorder.class);
+            if (sizes == null || sizes.length == 0) {
+                Log.e(TAG, "No video sizes found");
+                return;
+            }
+            videoSize = sizes[0];
 
             manager.openCamera(cameraId, new CameraDevice.StateCallback() {
                 @Override
@@ -183,10 +193,21 @@ public class CameraRecorderHelper {
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mediaRecorder.setOutputFile(getOutputMediaFile().getAbsolutePath());
+        
+        File outputFile = getOutputMediaFile();
+        if (outputFile == null) {
+            throw new IOException("Could not create output file");
+        }
+        mediaRecorder.setOutputFile(outputFile.getAbsolutePath());
+        
         mediaRecorder.setVideoEncodingBitRate(10000000);
         mediaRecorder.setVideoFrameRate(30);
+        
+        if (videoSize == null) {
+            videoSize = new Size(1280, 720); // Default if somehow null
+        }
         mediaRecorder.setVideoSize(videoSize.getWidth(), videoSize.getHeight());
+        
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         mediaRecorder.prepare();
