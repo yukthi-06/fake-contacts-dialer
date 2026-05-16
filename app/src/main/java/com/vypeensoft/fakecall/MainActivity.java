@@ -38,10 +38,6 @@ public class MainActivity extends AppCompatActivity implements ContactAdapter.On
         setupToolbar();
         setupRecyclerView();
         setupSearchView();
-
-        if (checkPermissions()) {
-            loadContacts();
-        }
     }
 
     @Override
