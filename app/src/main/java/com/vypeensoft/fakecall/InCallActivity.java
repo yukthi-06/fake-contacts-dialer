@@ -89,10 +89,18 @@ public class InCallActivity extends AppCompatActivity {
         LinearLayout layoutMute = findViewById(R.id.layout_mute);
         LinearLayout layoutKeypad = findViewById(R.id.layout_keypad);
         LinearLayout layoutSpeaker = findViewById(R.id.layout_speaker);
+        LinearLayout layoutAddCall = findViewById(R.id.layout_add_call);
+        LinearLayout layoutHold = findViewById(R.id.layout_hold);
+        LinearLayout layoutVideoCall = findViewById(R.id.layout_video_call);
+        LinearLayout layoutNotes = findViewById(R.id.layout_notes);
         
         ImageView imgMute = findViewById(R.id.img_mute);
         ImageView imgKeypad = findViewById(R.id.img_keypad);
         ImageView imgSpeaker = findViewById(R.id.img_speaker);
+        ImageView imgAddCall = findViewById(R.id.img_add_call);
+        ImageView imgHold = findViewById(R.id.img_hold);
+        ImageView imgVideoCall = findViewById(R.id.img_video_call);
+        ImageView imgNotes = findViewById(R.id.img_notes);
 
         AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
@@ -129,6 +137,22 @@ public class InCallActivity extends AppCompatActivity {
                 imgSpeaker.setColorFilter(Color.WHITE);
                 Toast.makeText(this, "Speakerphone off", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        layoutAddCall.setOnClickListener(v -> {
+            Toast.makeText(this, "Adding call...", Toast.LENGTH_SHORT).show();
+        });
+
+        layoutHold.setOnClickListener(v -> {
+            Toast.makeText(this, "Call on hold", Toast.LENGTH_SHORT).show();
+        });
+
+        layoutVideoCall.setOnClickListener(v -> {
+            Toast.makeText(this, "Switching to video...", Toast.LENGTH_SHORT).show();
+        });
+
+        layoutNotes.setOnClickListener(v -> {
+            Toast.makeText(this, "Opening notes...", Toast.LENGTH_SHORT).show();
         });
     }
 

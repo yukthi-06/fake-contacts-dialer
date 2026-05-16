@@ -11,5 +11,9 @@
     <string name="mute">Mute</string>
     <string name="speaker">Speaker</string>
     <string name="keypad">Keypad</string>
+    <string name="hold">Hold</string>
+    <string name="add_call">Add Call</string>
+    <string name="video_call">Video Call</string>
+    <string name="notes">Notes</string>
     <string name="search_contacts">Search contacts</string>
 </resources>
