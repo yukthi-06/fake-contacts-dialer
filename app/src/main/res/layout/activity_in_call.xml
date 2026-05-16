@@ -64,7 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/fab_end_call"
-        android:layout_marginBottom="48dp"
+        android:layout_marginBottom="16dp"
         android:columnCount="3"
         android:padding="24dp">
 
@@ -244,7 +244,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="48dp"
         android:src="@drawable/ic_call_end"
         app:backgroundTint="#FF5252"
         app:fabSize="normal"
