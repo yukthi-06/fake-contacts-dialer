@@ -24,6 +24,8 @@ public class InCallActivity extends AppCompatActivity {
     private boolean isMuted = false;
     private boolean isSpeakerOn = false;
     private boolean isKeypadOpen = false;
+    private boolean isHoldActive = false;
+    private boolean isVideoActive = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,15 +133,26 @@ public class InCallActivity extends AppCompatActivity {
         });
 
         layoutAddCall.setOnClickListener(v -> {
-            // Placeholder for add call action
+            imgAddCall.setColorFilter(Color.parseColor("#4CAF50"));
+            v.postDelayed(() -> imgAddCall.setColorFilter(Color.WHITE), 200);
         });
 
         layoutHold.setOnClickListener(v -> {
-            // Placeholder for hold action
+            isHoldActive = !isHoldActive;
+            if (isHoldActive) {
+                imgHold.setColorFilter(Color.parseColor("#4CAF50"));
+            } else {
+                imgHold.setColorFilter(Color.WHITE);
+            }
         });
 
         layoutVideoCall.setOnClickListener(v -> {
-            // Placeholder for video call action
+            isVideoActive = !isVideoActive;
+            if (isVideoActive) {
+                imgVideoCall.setColorFilter(Color.parseColor("#4CAF50"));
+            } else {
+                imgVideoCall.setColorFilter(Color.WHITE);
+            }
         });
     }
 
