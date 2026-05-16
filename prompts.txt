@@ -23,8 +23,8 @@ more prompts
 *	make the preview window as small as possible and allowed in android
 *	make the mute, keypad and speaker work... atleast make it look like it works
 *	In the fake calling screen, also add 'Hold', 'Add Call', 'Video Call' and 'Notes' button to make it look more authentic
-*	
-*	
+*	'Allow access to manager all files' is appearing twice on app startup
+*	Mute, Keypad, Speaker, Add Call, Hold, Video call... these buttons need to be a little lower, closer to the end button
 
 
 
