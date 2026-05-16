@@ -11,7 +11,6 @@ import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -106,10 +105,8 @@ public class InCallActivity extends AppCompatActivity {
             isMuted = !isMuted;
             if (isMuted) {
                 imgMute.setColorFilter(Color.parseColor("#4CAF50")); // Green for active
-                Toast.makeText(this, "Microphone muted", Toast.LENGTH_SHORT).show();
             } else {
                 imgMute.setColorFilter(Color.WHITE);
-                Toast.makeText(this, "Microphone unmuted", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -117,10 +114,8 @@ public class InCallActivity extends AppCompatActivity {
             isKeypadOpen = !isKeypadOpen;
             if (isKeypadOpen) {
                 imgKeypad.setColorFilter(Color.parseColor("#4CAF50"));
-                Toast.makeText(this, "Keypad shown", Toast.LENGTH_SHORT).show();
             } else {
                 imgKeypad.setColorFilter(Color.WHITE);
-                Toast.makeText(this, "Keypad hidden", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -129,24 +124,22 @@ public class InCallActivity extends AppCompatActivity {
             if (isSpeakerOn) {
                 audioManager.setSpeakerphoneOn(true);
                 imgSpeaker.setColorFilter(Color.parseColor("#4CAF50"));
-                Toast.makeText(this, "Speakerphone on", Toast.LENGTH_SHORT).show();
             } else {
                 audioManager.setSpeakerphoneOn(false);
                 imgSpeaker.setColorFilter(Color.WHITE);
-                Toast.makeText(this, "Speakerphone off", Toast.LENGTH_SHORT).show();
             }
         });
 
         layoutAddCall.setOnClickListener(v -> {
-            Toast.makeText(this, "Adding call...", Toast.LENGTH_SHORT).show();
+            // Placeholder for add call action
         });
 
         layoutHold.setOnClickListener(v -> {
-            Toast.makeText(this, "Call on hold", Toast.LENGTH_SHORT).show();
+            // Placeholder for hold action
         });
 
         layoutVideoCall.setOnClickListener(v -> {
-            Toast.makeText(this, "Switching to video...", Toast.LENGTH_SHORT).show();
+            // Placeholder for video call action
         });
     }
 
