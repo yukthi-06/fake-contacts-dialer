@@ -51,6 +51,9 @@ public class MainActivity extends AppCompatActivity implements ContactAdapter.On
         if (item.getItemId() == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
+        } else if (item.getItemId() == R.id.action_callback) {
+            startActivity(new Intent(this, CallbackSetupActivity.class));
+            return true;
         } else if (item.getItemId() == R.id.action_about) {
             startActivity(new Intent(this, AboutActivity.class));
             return true;

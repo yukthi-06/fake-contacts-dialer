@@ -54,6 +54,10 @@ public class CameraRecorderHelper {
         return instance;
     }
 
+    public boolean isRecording() {
+        return isRecording;
+    }
+
     public void startRecording(TextureView textureView) {
         if (isRecording) return;
         this.pendingTextureView = textureView;

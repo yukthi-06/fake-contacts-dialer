@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_call_gradient"
+    android:padding="32dp">
+
+    <!-- Caller Info Area -->
+    <LinearLayout
+        android:id="@+id/layout_caller_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="80dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txt_incoming_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Incoming call"
+            android:textColor="@color/accent"
+            android:textSize="16sp"
+            android:letterSpacing="0.1"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_incoming_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="John Doe"
+            android:textColor="@color/text_primary"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_incoming_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="+1 555 123 4567"
+            android:textColor="@color/text_secondary"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <!-- Large Avatar Container -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_centerInParent="true"
+        app:cardCornerRadius="80dp"
+        app:cardElevation="4dp"
+        app:strokeWidth="2dp"
+        app:strokeColor="@color/accent">
+
+        <ImageView
+            android:id="@+id/img_incoming_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_person_placeholder"
+            android:scaleType="centerCrop"
+            android:padding="24dp"
+            android:tint="@color/text_secondary" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Bottom Buttons Area -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="48dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <!-- Decline Button Container -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_decline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FF3B30"
+                app:srcCompat="@drawable/ic_call_end"
+                app:tint="@color/white"
+                app:elevation="4dp"
+                app:fabSize="normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Decline"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <!-- Answer Button Container -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_answer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#34C759"
+                app:srcCompat="@drawable/ic_call"
+                app:tint="@color/white"
+                app:elevation="4dp"
+                app:fabSize="normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Answer"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
