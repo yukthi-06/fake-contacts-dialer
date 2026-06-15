@@ -28,5 +28,5 @@
     </style>
 
     <style name="Theme.FakeCall.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-    <style name="Theme.FakeCall.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.FakeCall.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 </resources>
