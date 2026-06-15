@@ -19,7 +19,7 @@ public class JsonStorageHelper {
     private static final String TAG = "JsonStorageHelper";
     private static final String BASE_PATH = Environment.getExternalStorageDirectory().getPath() + "/Vypeensoft/Contacts_Phone_Dialer/";
     private static final String SETTINGS_DIR = BASE_PATH + "settings/";
-    private static final String AUDIO_DIR = BASE_PATH + "call_audio/";
+    private static final String AUDIO_DIR = BASE_PATH + "audio_samples/";
     private static final String JSON_FILE = SETTINGS_DIR + "contacts.json";
 
     public static List<ContactModel> loadContacts(Context context) {

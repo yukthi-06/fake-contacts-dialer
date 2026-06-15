@@ -7,7 +7,7 @@ A premium Android application built in Java that simulates a fake contacts list 
 - **Fake Dialing**: Simulates the outgoing call screen with a "Calling..." state and random ringing duration (4-8 seconds).
 - **Fake In-Call**: Simulates an active call with a timer, contact info, and audio playback.
 - **Local Storage**: Reads/writes contacts to `/sdcard/Vypeensoft/Contacts_Phone_Dialer/settings/contacts.json`.
-- **Audio Playback**: Plays corresponding MP3 files from `/sdcard/Vypeensoft/Contacts_Phone_Dialer/call_audio/` during calls.
+- **Audio Playback**: Plays corresponding MP3 files from `/sdcard/Vypeensoft/Contacts_Phone_Dialer/audio_samples/` during calls.
 - **Automatic Setup**: Creates required directories and default contacts on first launch.
 - **Permission Handling**: Supports Android 8.0 up to Android 14+ with proper runtime permission requests.
 
@@ -17,9 +17,9 @@ A premium Android application built in Java that simulates a fake contacts list 
 3. On first launch, the app will request storage permissions.
 4. Once granted, it will create the following structure on your SD card:
    - `/Vypeensoft/Contacts_Phone_Dialer/settings/contacts.json`
-   - `/Vypeensoft/Contacts_Phone_Dialer/call_audio/`
+   - `/Vypeensoft/Contacts_Phone_Dialer/audio_samples/`
 5. To hear audio during a call:
-   - Place MP3 files in the `call_audio` folder.
+   - Place MP3 files in the `audio_samples` folder.
    - The file names should match the `audio` field in `contacts.json` (e.g., `John.mp3`).
 
 ## Technical Details
