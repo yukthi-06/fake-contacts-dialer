@@ -19,6 +19,7 @@ public class DialingActivity extends AppCompatActivity {
     private ContactModel contact;
     private Handler handler = new Handler();
     private Runnable transitionRunnable;
+    private android.media.MediaPlayer ringtonePlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,45 @@ public class DialingActivity extends AppCompatActivity {
         setupUI();
         startRingingSimulation();
         setupCameraPreview();
+        playRingtone();
+    }
+
+    private void playRingtone() {
+        android.content.SharedPreferences prefs = getSharedPreferences("FakeCallPrefs", android.content.Context.MODE_PRIVATE);
+        String uriStr = prefs.getString("ringtone_uri", null);
+        android.net.Uri ringtoneUri = null;
+
+        if (uriStr != null) {
+            ringtoneUri = android.net.Uri.parse(uriStr);
+        } else {
+            ringtoneUri = android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_RINGTONE);
+        }
+
+        if (ringtoneUri != null) {
+            try {
+                ringtonePlayer = new android.media.MediaPlayer();
+                ringtonePlayer.setDataSource(this, ringtoneUri);
+                ringtonePlayer.setLooping(true);
+                ringtonePlayer.prepare();
+                ringtonePlayer.start();
+            } catch (Exception e) {
+                android.util.Log.e("DialingActivity", "Error playing ringtone", e);
+            }
+        }
+    }
+
+    private void stopRingtone() {
+        if (ringtonePlayer != null) {
+            try {
+                if (ringtonePlayer.isPlaying()) {
+                    ringtonePlayer.stop();
+                }
+                ringtonePlayer.release();
+            } catch (Exception e) {
+                // Ignore
+            }
+            ringtonePlayer = null;
+        }
     }
 
     private void setupCameraPreview() {
@@ -84,6 +124,7 @@ public class DialingActivity extends AppCompatActivity {
         int delay = (new Random().nextInt(5) + 4) * 1000;
 
         transitionRunnable = () -> {
+            stopRingtone();
             Intent intent = new Intent(DialingActivity.this, InCallActivity.class);
             intent.putExtra("contact", contact);
             startActivity(intent);
@@ -97,6 +138,7 @@ public class DialingActivity extends AppCompatActivity {
         if (transitionRunnable != null) {
             handler.removeCallbacks(transitionRunnable);
         }
+        stopRingtone();
     }
 
     @Override

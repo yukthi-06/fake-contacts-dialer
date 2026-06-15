@@ -48,7 +48,10 @@ public class MainActivity extends AppCompatActivity implements ContactAdapter.On
 
     @Override
     public boolean onOptionsItemSelected(android.view.MenuItem item) {
-        if (item.getItemId() == R.id.action_about) {
+        if (item.getItemId() == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        } else if (item.getItemId() == R.id.action_about) {
             startActivity(new Intent(this, AboutActivity.class));
             return true;
         }
